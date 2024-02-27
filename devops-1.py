@@ -130,4 +130,18 @@ try:
 except Exception as error:
     print (error)
 
+# retrieve and upload the test image to the s3 bucket
 
+
+# command to save image to local machine and redirect output to dev/null
+command = "curl -o logo.jpg http://devops.witdemo.net/logo.jpg 1> /dev/null "
+
+subprocess.run(command, shell=True)
+
+image_object_name = 'logo.jpg'
+
+try:
+    response = s3.Object(new_bucket_name, image_object_name).put(Body=open(image_object_name, 'rb'),ContentType='image.jpeg')
+    print (response)
+except Exception as error:
+    print (error)
