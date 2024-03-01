@@ -43,19 +43,24 @@ new_instances = ec2.create_instances(
             systemctl enable httpd
             systemctl start httpd
             echo '<html>' > index.html
+            echo '<body>' >> index.html
             TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"`
             echo '<h1>Welcome to DevOps, HDip CS 2024</h1><br>' >> index.html
-            echo '<h2>See instance metadata below:</h2><br>' >> index.html
+            echo '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Devops-toolchain.svg/640px-Devops-toolchain.svg.png" alt="Dev Ops Image">' >> index.html
+            echo '<h2>See instance metadata below: </h2><br>' >> index.html
             echo '<p>Private IP Address: </p>' >> index.html
-            curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/local-ipv4 >> index.html
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/local-ipv4 >> index.html)
             echo '<br><p>availability zone: </p>' >> index.html
-            curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/placement/availability-zone >> index.html
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/placement/availability-zone >> index.html)
+            echo 'Instance Type: '
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://latest/meta-data/instance-type >> index.html)
             echo '<br><p>Public IP Address: </p>' >> index.html
-            curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/public-ipv4 >> index.html
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/public-ipv4) >> index.html
             echo '<br><p>AMI ID: </p>' >> index.html
-            curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/ami-id >> index.html
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/ami-id) >> index.html
             echo '<br><p>Security Groups: </p>' >> index.html
-            curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/security-groups >> index.html
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/security-groups) >> index.html
+            echo '</body>' >> index.html
             cp index.html /var/www/html/index.html
             """,
     KeyName='HDip-2024'
