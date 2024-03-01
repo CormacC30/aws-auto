@@ -7,9 +7,9 @@ INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.2
 MEMORYUSAGE=$(free -m | awk 'NR==2{printf "%.2f%%", $3*100/$2 }')
 PROCESSES=$(expr $(ps -A | grep -c .) - 1)
 HTTPD_PROCESSES=$(ps -A | grep -c httpd)
-CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}')
-CONNECTED=$(netstat | grep -c "CONNECTED")
-
+CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print $2 + $4}') # cpu usage
+CONNECTED=$(netstat | grep -c "CONNECTED") # connected interfaces
+DISKUSAGE=$(df -h | awk '$NF == "/" { print $5 }') # disk usage
 
 echo "Instance ID: $INSTANCE_ID"
 echo
@@ -37,4 +37,8 @@ echo
 echo "------------------------------"
 echo
 echo "number of connected interfaces: $CONNECTED"
+echo
+echo "------------------------------"
+echo
+echo "disk usage: $DISKUSAGE"
 

@@ -6,6 +6,7 @@ import json
 import random
 import string
 import subprocess
+
 ec2 = boto3.resource('ec2')
 s = [] # the list of instance names
 
@@ -186,4 +187,36 @@ monitoring_script = f"""scp -o StrictHostKeyChecking=no -i HDip-2024.pem monitor
     ssh -o StrictHostKeyChecking=no -i HDip-2024.pem ec2-user@{ip_address} './monitoring.sh'"""
     
 subprocess.run(monitoring_script, shell=True)
+
+## cloudwatch - additional functionality
+
+# List all running instance IDs
+print("Running instances:")
+for inst in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]):
+    print(inst.id)
+
+cloudwatch = boto3.resource('cloudwatch')
+ec2 = boto3.resource('ec2')
+
+instid = input("Please enter instance ID: ")    # Prompt the user to enter an Instance ID
+instance = ec2.Instance(instid)
+instance.monitor()  # Enables detailed monitoring on instance (1-minute intervals)
+
+interval = 360
+
+time.sleep(interval)     
+
+metric_iterator = cloudwatch.metrics.filter(Namespace='AWS/EC2',
+                                            MetricName='CPUUtilization',
+                                            Dimensions=[{'Name':'InstanceId', 'Value': instid}])
+
+metric = list(metric_iterator)[0]    # extract first (only) element
+
+response = metric.get_statistics(StartTime = datetime.datetime.utcnow() - datetime.timedelta(minutes=5),   # 5 minutes ago # appended datetime class
+                                 EndTime=datetime.datetime.utcnow(),                              # now # appended datetime class
+                                 Period=300,                                             # 5 min intervals
+                                 Statistics=['Average'])
+
+print ("Average CPU utilisation:", response['Datapoints'][0]['Average'], response['Datapoints'][0]['Unit'])
+# print (response)   # for debugging only
 
