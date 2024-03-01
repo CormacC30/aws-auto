@@ -178,10 +178,10 @@ print("""
    _________________________________________
    
    """)
-webbrowser.open_new_tab(f"http://{bucket_name}.s3-website-us-east-1.amazonaws.com")
+webbrowser.open_new_tab(f"http://{bucket_name}.s3-website-us-east-1.amazonaws.com") # opens the s3 bucket endpoint
 
 # monitoring
-
+# script string run as command to run the monitoring shell script within the ec2 instance
 monitoring_script = f"""scp -o StrictHostKeyChecking=no -i HDip-2024.pem monitoring.sh ec2-user@{ip_address}:. &&
     ssh -o StrictHostKeyChecking=no -i HDip-2024.pem ec2-user@{ip_address} 'chmod 700 monitoring.sh' &&
     ssh -o StrictHostKeyChecking=no -i HDip-2024.pem ec2-user@{ip_address} './monitoring.sh'"""
