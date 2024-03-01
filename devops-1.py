@@ -120,6 +120,39 @@ bucket_policy = {
                 ]
 }
 s3.Bucket(bucket_name).Policy().put(Policy=json.dumps(bucket_policy)) 
+
+# command to save image to local machine and redirect output to dev/null
+command = "curl -o logo.jpg http://devops.witdemo.net/logo.jpg 1> /dev/null "
+
+subprocess.run(command, shell=True)
+
+image_object_name = 'logo.jpg'
+
+# upload image 
+try:
+    response = s3.Object(bucket_name, image_object_name).put(Body=open(image_object_name, 'rb'),ContentType='image.jpeg')
+    print (response)
+except Exception as error:
+    print (error)
+
+# creating html content
+html_content = f"""
+<html>
+    <body>
+        <h1>Welcome to S3 Bucket Index Page</h1>
+        <img src="https://{bucket_name}.s3.amazonaws.com/{image_object_name}" alt="SETU logo">
+    </body>
+</html>
+"""
+
+# put index.html in an s3 bucket
+object_name = 'index.html'
+
+try:
+    response = s3.Object(bucket_name, object_name).put(Key='index.html',Body= html_content,ContentType='text/html')
+    print (response)
+except Exception as error:
+    print (error)
    
 website_configuration = {
     'ErrorDocument': {'Key': 'error.html'},
@@ -130,34 +163,16 @@ bucket_website = s3.BucketWebsite(f'{bucket_name}')
 
 bucket_website.put(WebsiteConfiguration=website_configuration)
 print(f"bucket name: {bucket_name}")
-print("Upload an index.html file to test it works!")
+#######################################################
+# cmd = f"scp -o StrictHostKeyChecking=no -i ~/DevOps/HDip-2024.pem ec2-user@{ip_address}:/var/www/html/index.html ."
 
-cmd = f"scp -o StrictHostKeyChecking=no -i ~/DevOps/HDip-2024.pem ec2-user@{ip_address}:/var/www/html/index.html ."
-
-result = subprocess.run(cmd, shell=True)
-print (result.returncode)
-# put index.html in an s3 bucket
-
-object_name = 'index.html'
-
-try:
-    response = s3.Object(bucket_name, object_name).put(Body=open(object_name, 'rb'),ContentType='text/html')
-    print (response)
-except Exception as error:
-    print (error)
-
-# retrieve and upload the test image to the s3 bucket
+# result = subprocess.run(cmd, shell=True)
+# print (result.returncode)
+#######################################################
 
 
-# command to save image to local machine and redirect output to dev/null
-command = "curl -o logo.jpg http://devops.witdemo.net/logo.jpg 1> /dev/null "
 
-subprocess.run(command, shell=True)
+# retrieve and upload the SETU logo to the s3 bucket
 
-image_object_name = 'logo.jpg'
 
-try:
-    response = s3.Object(bucket_name, image_object_name).put(Body=open(image_object_name, 'rb'),ContentType='image.jpeg')
-    print (response)
-except Exception as error:
-    print (error)
+
