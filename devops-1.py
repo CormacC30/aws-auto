@@ -83,7 +83,14 @@ ip_address = instance.public_ip_address
 
 print(f"The IP address of this instance is: {ip_address}")
 print("Waiting for your apache web page to become available...")
-time.sleep(30)    
+time.sleep(30)
+print("""
+   _________________________________________
+   
+   ---------Opening EC2 Web page...---------
+   _________________________________________
+   
+   """)    
 webbrowser.open_new_tab(f"http://{ip_address}")
 
 # create an s3 bucket
@@ -163,16 +170,12 @@ bucket_website = s3.BucketWebsite(f'{bucket_name}')
 
 bucket_website.put(WebsiteConfiguration=website_configuration)
 print(f"bucket name: {bucket_name}")
-#######################################################
-# cmd = f"scp -o StrictHostKeyChecking=no -i ~/DevOps/HDip-2024.pem ec2-user@{ip_address}:/var/www/html/index.html ."
-
-# result = subprocess.run(cmd, shell=True)
-# print (result.returncode)
-#######################################################
-
-
-
-# retrieve and upload the SETU logo to the s3 bucket
-
-
+print("""
+   _________________________________________
+   
+   ------Opening S3 Bucket Endpoint...------
+   _________________________________________
+   
+   """)
+webbrowser.open_new_tab(f"http://{bucket_name}.s3-website-us-east-1.amazonaws.com")
 
