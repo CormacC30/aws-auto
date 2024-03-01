@@ -129,7 +129,7 @@ bucket_policy = {
 s3.Bucket(bucket_name).Policy().put(Policy=json.dumps(bucket_policy)) 
 
 # command to save image to local machine and redirect output to dev/null
-command = "curl -o logo.jpg http://devops.witdemo.net/logo.jpg 1> /dev/null "
+command = "curl -o logo.jpg http://devops.witdemo.net/logo.jpg"
 
 subprocess.run(command, shell=True)
 
@@ -178,4 +178,12 @@ print("""
    
    """)
 webbrowser.open_new_tab(f"http://{bucket_name}.s3-website-us-east-1.amazonaws.com")
+
+# monitoring
+
+monitoring_script = f"""scp -o StrictHostKeyChecking=no -i HDip-2024.pem monitoring.sh ec2-user@{ip_address}:. &&
+    ssh -o StrictHostKeyChecking=no -i HDip-2024.pem ec2-user@{ip_address} 'chmod 700 monitoring.sh' &&
+    ssh -o StrictHostKeyChecking=no -i HDip-2024.pem ec2-user@{ip_address} './monitoring.sh'"""
+    
+subprocess.run(monitoring_script, shell=True)
 
