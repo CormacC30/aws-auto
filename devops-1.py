@@ -20,6 +20,7 @@ for inst in ec2.instances.all():
     print (inst.id, inst.state)
             
 new_instance_name = f'Demo instance {formatted_time}' # gives the new instance an auto-incremented name
+
             
 new_instances = ec2.create_instances(
     ImageId='ami-0277155c3f0ab2930',
@@ -38,6 +39,7 @@ new_instances = ec2.create_instances(
             ]
         },
     ],
+    
     #user data to create apache web server
     UserData="""#!/bin/bash
             yum update -y
@@ -51,11 +53,11 @@ new_instances = ec2.create_instances(
             echo '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Devops-toolchain.svg/640px-Devops-toolchain.svg.png" alt="Dev Ops Image">' >> index.html
             echo '<h2>See instance metadata below: </h2><br>' >> index.html
             echo '<p>Private IP Address: </p>' >> index.html
-            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/local-ipv4 >> index.html)
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/local-ipv4) >> index.html
             echo '<br><p>availability zone: </p>' >> index.html
-            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/placement/availability-zone >> index.html)
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/placement/availability-zone) >> index.html
             echo 'Instance Type: '
-            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://latest/meta-data/instance-type >> index.html)
+            echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://latest/meta-data/instance-type) >> index.html
             echo '<br><p>Public IP Address: </p>' >> index.html
             echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/public-ipv4) >> index.html
             echo '<br><p>AMI ID: </p>' >> index.html
