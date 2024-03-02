@@ -195,10 +195,12 @@ print("Running instances:")
 for inst in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]):
     print(inst.id)
 
+print(f"Newly Created Instance: {new_instances[0].id}")
 cloudwatch = boto3.resource('cloudwatch')
 ec2 = boto3.resource('ec2')
 
 instid = input("Please enter instance ID: ")    # Prompt the user to enter an Instance ID
+print("Please wait while collecting data on CPU utilisation...")
 instance = ec2.Instance(instid)
 instance.monitor()  # Enables detailed monitoring on instance (1-minute intervals)
 
